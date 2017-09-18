@@ -45,8 +45,8 @@ public class GameService {
         //program to mostly self-contained. But this is not always what you want;
         //sometimes you want to create the schema externally via a script.
         try (Connection conn = db.open()) {
-//            String debug = "DROP TABLE games";
-//            conn.createQuery(debug).executeUpdate();
+            String debug = "DROP TABLE games";
+            conn.createQuery(debug).executeUpdate();
 
             String sql = "CREATE TABLE IF NOT EXISTS games (gameId INTEGER PRIMARY KEY, " +
                          "state TEXT, pieceType TEXT, hound1_x INTEGER, hound1_y INTEGER, " +
