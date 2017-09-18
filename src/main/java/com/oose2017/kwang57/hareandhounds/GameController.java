@@ -14,7 +14,7 @@ import static spark.Spark.*;
 
 public class GameController {
 
-	private static final String API_CONTEXT = "/hareandhounds/api/games";
+    private static final String API_CONTEXT = "/hareandhounds/api/games";
 
     private final GameService gameService;
     private final Logger logger = LoggerFactory.getLogger(GameController.class);
@@ -65,27 +65,27 @@ public class GameController {
             return Collections.EMPTY_MAP;
         }, new JsonTransformer());
 
-    	// Describe the game board
+        // Describe the game board
         get(API_CONTEXT + "/:id/board", "application/json", (request, response) -> {
-			try {
-				response.status(200);
-				return gameService.describeBoard(request.params(":id"));
-			} catch (GameService.GameServiceIdException ex) {
-				response.status(404);
-				return new ErrorMessage(ex.getMessage());
-			}
+            try {
+                response.status(200);
+                return gameService.describeBoard(request.params(":id"));
+            } catch (GameService.GameServiceIdException ex) {
+                response.status(404);
+                return new ErrorMessage(ex.getMessage());
+            }
             //return Collections.EMPTY_MAP;
         }, new JsonTransformer());
 
-    	// fetch state
+        // fetch state
         get(API_CONTEXT + "/:id/state","application/json", (request, response) -> {
-			try {
-				response.status(200);
-				return gameService.describeState(request.params(":id"));
-			} catch (GameService.GameServiceIdException ex) {
-				response.status(404);
-				return new ErrorMessage(ex.getMessage());
-			}
+            try {
+                response.status(200);
+                return gameService.describeState(request.params(":id"));
+            } catch (GameService.GameServiceIdException ex) {
+                response.status(404);
+                return new ErrorMessage(ex.getMessage());
+            }
             //return Collections.EMPTY_MAP;
         }, new JsonTransformer());
 
