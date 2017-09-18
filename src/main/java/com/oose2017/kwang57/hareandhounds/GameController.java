@@ -43,10 +43,10 @@ public class GameController {
                 return gameService.joinGame(request.params(":id"));
             } catch (GameService.GameServiceIdException ex) {
                 response.status(404);
-                return ex.getMessage();
+                return new ErrorMessage(ex.getMessage());
             } catch (GameService.GameServiceJoinException ex) {
                 response.status(410);
-                return ex.getMessage();
+                return new ErrorMessage(ex.getMessage());
             }
         }, new JsonTransformer());
 
@@ -57,10 +57,10 @@ public class GameController {
                 gameService.play(request.params(":id"), request.body());
             } catch (GameService.GameServiceIdException ex){
                 response.status(404);
-                return ex.getMessage();
+                return new ErrorMessage(ex.getMessage());
             } catch (GameService.GameServiceMoveException ex) {
                 response.status(422);
-                return ex.getMessage();
+                return new ErrorMessage(ex.getMessage());
             }
             return Collections.EMPTY_MAP;
         }, new JsonTransformer());
@@ -72,7 +72,7 @@ public class GameController {
 				return gameService.describeBoard(request.params(":id"));
 			} catch (GameService.GameServiceIdException ex) {
 				response.status(404);
-				return ex.getMessage();
+				return new ErrorMessage(ex.getMessage());
 			}
             //return Collections.EMPTY_MAP;
         }, new JsonTransformer());
@@ -84,7 +84,7 @@ public class GameController {
 				return gameService.describeState(request.params(":id"));
 			} catch (GameService.GameServiceIdException ex) {
 				response.status(404);
-				return ex.getMessage();
+				return new ErrorMessage(ex.getMessage());
 			}
             //return Collections.EMPTY_MAP;
         }, new JsonTransformer());
