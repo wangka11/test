@@ -95,10 +95,10 @@ public class GameService {
 
     	Map<Integer, List<int[]>> pieces = boards.get(Integer.parseInt(gameId)).getPieces();
     	for (int[] hound : pieces.get(Board.HOUND)){
-    	    result.add(new Piece(gameId, null, "Hound", hound[0], hound[1]));
+    	    result.add(new Piece(gameId, null, "HOUND", hound[0], hound[1]));
         }
         int[] hare = pieces.get(Board.HARE).get(0);
-        result.add(new Piece(gameId, null, "Hare", hare[0], hare[1]));
+        result.add(new Piece(gameId, null, "HARE", hare[0], hare[1]));
 
     	return result;
     }
