@@ -32,6 +32,7 @@ public class GameService {
 	
     private final Logger logger = LoggerFactory.getLogger(GameController.class);
 
+
     /**
      * Construct the model with a pre-defined datasource. The current implementation
      * also ensures that the DB schema is created if necessary.
@@ -343,11 +344,11 @@ public class GameService {
                             hareStalling = true;
                         }
                     } else */
-                    if (temp.containsKey("hound")){
-                        if (temp.get("hound") >= 3){
-                            houndStalling = true;
-                        }
-                    }
+//                    if (temp.containsKey("hound")){
+//                        if (temp.get("hound") >= 3){
+//                            houndStalling = true;
+//                        }
+//                    }
                 }
             }
         }
@@ -361,6 +362,10 @@ public class GameService {
 
         if (houndStalling && hareStalling){
             board.setWin(Board.WIN_HARE_S);
+        }
+
+        if(board.getStallings().containsValue(3)){
+            houndStalling = true;
         }
 
     }

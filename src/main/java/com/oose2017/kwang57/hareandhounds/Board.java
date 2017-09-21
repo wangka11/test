@@ -23,6 +23,8 @@ public class Board {
     private int[] hound3 = new int[] {1, 2};
     private int[] hare = new int[] {4, 1};
 
+    private Hashtable<String, Integer> stallings = new Hashtable<>();
+
 	public Board(String gameId, String pieceType) {
         this.gameId = gameId;
         this.pieceType = pieceType;
@@ -140,8 +142,16 @@ public class Board {
             }
             board[fromY][fromX] = 0;
 
+            String key = Arrays.deepToString(getBoard());
+            if(stallings.containsKey(key)){
+                stallings.put(key, stallings.get(key)+1);
+            } else {
+                stallings.put(key, 1);
+            }
         }
     }
+
+    public Hashtable<String, Integer> getStallings() {return this.stallings;}
 
     public Map<MapKey, Map<String, Integer>> getStalling() {return stallingMonitor;}
 
