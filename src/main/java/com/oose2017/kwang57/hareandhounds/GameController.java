@@ -32,8 +32,9 @@ public class GameController {
                 return gameService.startGame(request.body());
             } catch (Exception e) {
                 logger.error("Failed to create a new game");
-                return Collections.EMPTY_MAP;
+                response.status(400);
             }
+            return Collections.EMPTY_MAP;
         }, new JsonTransformer());
 
         // Join a game
@@ -53,7 +54,7 @@ public class GameController {
         // Play a game
         post(API_CONTEXT + "/:id/turns","application/json", (request, response) -> {
             try {
-                response.status(201);
+                response.status(200);
                 gameService.play(request.params(":id"), request.body());
             } catch (GameService.GameServiceIdException ex){
                 response.status(404);

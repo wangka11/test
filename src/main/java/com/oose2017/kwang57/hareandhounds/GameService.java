@@ -25,11 +25,11 @@ public class GameService {
     private static final int TWO = 2;
 
     private static final int FOUR = 4;
-	
+
     private List<Board> boards = new ArrayList<>();
 
     private Sql2o db;
-	
+
     private final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     /**
@@ -40,19 +40,19 @@ public class GameService {
      */
 	public GameService(DataSource dataSource) throws GameServiceException {
 		db = new Sql2o(dataSource);
-		
+
         //Create the schema for the database if necessary. This allows this
         //program to mostly self-contained. But this is not always what you want;
         //sometimes you want to create the schema externally via a script.
         try (Connection conn = db.open()) {
-//            String debug = "DROP TABLE games";
-//            conn.createQuery(debug).executeUpdate();
+          //  String debug = "DROP TABLE games";
+          //  conn.createQuery(debug).executeUpdate();
 
             String sql = "CREATE TABLE IF NOT EXISTS games (gameId INTEGER PRIMARY KEY, " +
                          "state TEXT, pieceType TEXT, hound1_x INTEGER, hound1_y INTEGER, " +
                     "hound2_x INTEGER, hound2_y INTEGER, hound3_x INTEGER, hound3_y INTEGER, " +
                     "hare_x INTEGER, hare_y INTEGER)" ;
-            
+
             conn.createQuery(sql).executeUpdate();
 
             String sql_query = "SELECT * FROM games" ;
@@ -77,23 +77,19 @@ public class GameService {
                         game.getPositions("hound1"), game.getPositions("hound2"),
             			game.getPositions("hound3"), game.getPositions("hare")));
             }
-           
+
         } catch(Sql2oException ex) {
             logger.error("Failed to create schema at startup", ex);
             throw new GameServiceException("Failed to create schema at startup", ex);
-        }	
+        }
 	}
 
 
-    public List<Piece> describeBoard(String gameId) throws ArrayIndexOutOfBoundsException, GameServiceIdException {
-        if (!isValidId(gameId)){
-            return null;
-        }
-
-//    	if(gameId == null || boards.get(Integer.parseInt(gameId)) == null) {
-//    		logger.error("This id does not fetch to a board.");
-//    		throw new GameServiceIdException("This id does not fetch to a board.", null);
-//    	}
+    public List<Piece> describeBoard(String gameId) throws GameServiceIdException {
+    	if(gameId == null || boards.get(Integer.parseInt(gameId)) == null) {
+    		logger.error("This id does not fetch to a board.");
+    		throw new GameServiceIdException("This id does not fetch to a board.", null);
+    	}
 
     	List<Piece> result = new ArrayList<>();
 
@@ -106,12 +102,13 @@ public class GameService {
 
     	return result;
     }
-    
 
-    public Board describeState(String gameId) throws ArrayIndexOutOfBoundsException, GameServiceIdException{
-        if (!isValidId(gameId)){
-            return null;
-        }
+
+    public Board describeState(String gameId) throws GameServiceIdException{
+    	if(gameId == null || boards.get(Integer.parseInt(gameId)) == null) {
+            logger.error("This id does not fetch to a state.");
+            throw new GameServiceIdException("This id does not fetch to a state.", null);
+    	}
 
     	return boards.get(Integer.parseInt(gameId));
     }
@@ -123,7 +120,7 @@ public class GameService {
         String pieceType = new Gson().fromJson(body, Piece.class).getPieceType();
         Board board = new Board(Integer.toString(gameId), pieceType);
 
-        
+
         try (Connection conn = db.open()) {
 //            String debug = "DROP TABLE games";
 //            conn.createQuery(debug).executeUpdate();
@@ -151,61 +148,46 @@ public class GameService {
         return new NewGame(Integer.toString(gameId), PLAYER_ONE, pieceType);
 	}
 
-	public NewGame joinGame(String gameId) throws ArrayIndexOutOfBoundsException,
-            GameServiceException, GameServiceIdException, GameServiceJoinException {
-	    if(isValidId(gameId)) {
-            Board board = boards.get(Integer.parseInt(gameId));
-            String opponentType = board.opponentType();
-
-            if (boards.get(Integer.parseInt(gameId)).getState() != ("WAITING_FOR_SECOND_PLAYER")) {
-                logger.error("Second player already joined");
-                throw new GameServiceJoinException("Second player already joined", null);
-            }
-
-            String sql = "UPDATE games SET state = :state WHERE gameId = :gameId ";
-            try (Connection conn = db.open()) {
-                board.move(0, 0, 0, 0);
-                conn.createQuery(sql)
-                        .addParameter("gameId", Integer.parseInt(gameId))
-                        .addParameter("state", Board.TURN_HOUND)
-                        .executeUpdate();
-
-                NewGame returns = new NewGame(gameId, PLAYER_TWO, opponentType);
-                return returns;
-            } catch (Sql2oException ex) {
-                logger.error(String.format("GameService.update: Failed to update database for id: %s", gameId), ex);
-                throw new GameServiceException("", ex);
-            }
-        }
-        return null;
-	}
-
-	public boolean isValidId(String gameId) throws ArrayIndexOutOfBoundsException, GameServiceIdException{
-        try{
-            if (Integer.parseInt(gameId) >= boards.size()){
-                logger.error("Invalid game id");
-                throw new GameServiceIdException("Invalid game id", null);
-            }
-            boards.get(Integer.parseInt(gameId));
-            return true;
+	public NewGame joinGame(String gameId) throws GameServiceException, GameServiceIdException, GameServiceJoinException {
+	    try{
+	        Board board = boards.get(Integer.parseInt(gameId));
         } catch(ArrayIndexOutOfBoundsException ex){
-            logger.error("Invalid game id");
-            throw new GameServiceIdException("Invalid game id", ex);
-        } catch(NumberFormatException ex) {
-            logger.error("The format of the game ID is not valid");
-            throw new GameServiceIdException("The format of the game ID is not valid", ex);
-        } catch(NullPointerException ex) {
-            logger.error("The format of the game ID is not valid");
-            throw new GameServiceIdException("The format of the game ID is not valid", ex);
+	        logger.error("Invalid game id");
+	        throw new GameServiceIdException("Invalid game id", ex);
         }
-    }
+        if(gameId == null || boards.get(Integer.parseInt(gameId)) == null) {
+            logger.error("Invalid game id");
+            throw new GameServiceIdException("Invalid game id", null);
+        }
+
+        Board board = boards.get(Integer.parseInt(gameId));
+        String opponentType = board.opponentType();
+
+        if (boards.get(Integer.parseInt(gameId)).getState() != ("WAITING_FOR_SECOND_PLAYER")) {
+    		logger.error("Second player already joined");
+    		throw new GameServiceJoinException("Second player already joined", null);
+        }
+
+        String sql = "UPDATE games SET state = :state WHERE gameId = :gameId ";
+        try (Connection conn = db.open()) {
+            board.move(0, 0, 0,0);
+            conn.createQuery(sql)
+                    .addParameter("gameId", Integer.parseInt(gameId))
+                    .addParameter("state", Board.TURN_HOUND)
+                    .executeUpdate();
+
+            NewGame returns = new NewGame(gameId, PLAYER_TWO, opponentType);
+            return returns;
+        } catch(Sql2oException ex) {
+            logger.error(String.format("GameService.update: Failed to update database for id: %s", gameId), ex);
+            throw new GameServiceException("", ex);
+        }
+
+	}
 
     public void play(String gameId, String body) throws GameServiceException,
             GameServiceIdException, GameServiceMoveException{
 
-	    if (!isValidId(gameId)){
-	        return;
-        }
         if(gameId == null || boards.get(Integer.parseInt(gameId)) == null) {
             logger.error("INVALID_GAME_ID");
             throw new GameServiceIdException("INVALID_GAME_ID", null);
@@ -362,7 +344,7 @@ public class GameService {
 
     }
 
-   
+
 
     //-----------------------------------------------------------------------------//
     // Helper Classes and Methods
@@ -373,26 +355,26 @@ public class GameService {
             super(message, cause);
         }
     }
-    
+
     public static class GameServiceIdException extends Exception {
         public GameServiceIdException(String message, Throwable cause) {
             super(message, cause);
         }
     }
-    
+
     public static class GameServiceJoinException extends Exception {
         public GameServiceJoinException(String message, Throwable cause) {
             super(message, cause);
         }
     }
-    
+
     public static class GameServiceMoveException extends Exception {
         public GameServiceMoveException(String message, Throwable cause) {
             super(message, cause);
         }
     }
-    
-    
-    
+
+
+
 
 }
