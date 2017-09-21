@@ -338,11 +338,12 @@ public class GameService {
                 MapKey key = new MapKey(new int[] {j, i});
                 if (stalling.containsKey(key)){
                     Map<String, Integer> temp = stalling.get(key);
-                    if (temp.containsKey("hare")){
+                    /*if (temp.containsKey("hare")){
                         if (temp.get("hare") >= 3){
                             hareStalling = true;
                         }
-                    } else if (temp.containsKey("hound")){
+                    } else */
+                    if (temp.containsKey("hound")){
                         if (temp.get("hound") >= 3){
                             houndStalling = true;
                         }
