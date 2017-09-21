@@ -46,8 +46,8 @@ public class GameService {
         //program to mostly self-contained. But this is not always what you want;
         //sometimes you want to create the schema externally via a script.
         try (Connection conn = db.open()) {
-//            String debug = "DROP TABLE games";
-//            conn.createQuery(debug).executeUpdate();
+            String debug = "DROP TABLE games";
+            conn.createQuery(debug).executeUpdate();
 
             String sql = "CREATE TABLE IF NOT EXISTS games (gameId INTEGER PRIMARY KEY, " +
                          "state TEXT, pieceType TEXT, hound1_x INTEGER, hound1_y INTEGER, " +
@@ -224,12 +224,14 @@ public class GameService {
         }
 
         Board board = boards.get(Integer.parseInt(gameId));
+
+        if (board.getState().equals(Board.WIN_HARE_E) || board.getState().equals(Board.WIN_HARE_S) ||
+                board.getState().equals(Board.WIN_HOUND)){
+            logger.error("INCORRECT_TURN");
+            throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
+        }
         if (!isIllegalMove(board, data)) {
-            if (board.getState().equals(Board.WIN_HARE_E) || board.getState().equals(Board.WIN_HARE_S) ||
-                    board.getState().equals(Board.WIN_HOUND)){
-                logger.error("INCORRECT_TURN");
-                throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
-            }
+
             logger.error("ILLEGAL_MOVE");
             throw new GameServiceMoveException("ILLEGAL_MOVE", new RuntimeException("ILLEGAL_MOVE"));
         }
