@@ -223,63 +223,61 @@ public class GameService {
         }
 
         Board board = boards.get(Integer.parseInt(gameId));
-
-        if (!isValidTurn(board, data)){
-            logger.error("INCORRECT_TURN");
-            throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
-        } else if (!isIllegalMove(board, data)){
+        if (!isIllegalMove(board, data)) {
             logger.error("ILLEGAL_MOVE");
             throw new GameServiceMoveException("ILLEGAL_MOVE", null);
-        } else {
-            int fromX, fromY, toX, toY;
-            fromX = data.getFromX();
-            fromY = data.getFromY();
-            toX = data.getToX();
-            toY = data.getToY();
-            board.move(fromX, fromY, toX, toY);
+        }
+        if (!isValidTurn(board, data)) {
+            logger.error("INCORRECT_TURN");
+            throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
+        }
+        int fromX, fromY, toX, toY;
+        fromX = data.getFromX();
+        fromY = data.getFromY();
+        toX = data.getToX();
+        toY = data.getToY();
+        board.move(fromX, fromY, toX, toY);
 
-            check(board);
+        check(board);
 
-            try (Connection conn = db.open()){
-                String sql = "SELECT hound1_x, hound1_y, hound2_x, hound2_y, hound3_x, hound3_y, hare_x, " +
-                        "hare_y FROM games WHERE gameId = :gameId";
-                Game game = conn.createQuery(sql).addParameter("gameId", gameId)
-                        .addColumnMapping("hound1_x", "hound1_x")
-                        .addColumnMapping("hound1_y", "hound1_y")
-                        .addColumnMapping("hound2_x", "hound2_x")
-                        .addColumnMapping("hound2_y", "hound2_y")
-                        .addColumnMapping("hound3_x", "hound3_x")
-                        .addColumnMapping("hound3_y", "hound3_y")
-                        .addColumnMapping("hare_x", "hare_x")
-                        .addColumnMapping("hare_y", "hare_y")
-                        .executeAndFetchFirst(Game.class);
+        try (Connection conn = db.open()) {
+            String sql = "SELECT hound1_x, hound1_y, hound2_x, hound2_y, hound3_x, hound3_y, hare_x, " +
+                    "hare_y FROM games WHERE gameId = :gameId";
+            Game game = conn.createQuery(sql).addParameter("gameId", gameId)
+                    .addColumnMapping("hound1_x", "hound1_x")
+                    .addColumnMapping("hound1_y", "hound1_y")
+                    .addColumnMapping("hound2_x", "hound2_x")
+                    .addColumnMapping("hound2_y", "hound2_y")
+                    .addColumnMapping("hound3_x", "hound3_x")
+                    .addColumnMapping("hound3_y", "hound3_y")
+                    .addColumnMapping("hare_x", "hare_x")
+                    .addColumnMapping("hare_y", "hare_y")
+                    .executeAndFetchFirst(Game.class);
 
-                String update = "";
-                int[] froms = new int[] {fromX, fromY};
-                if (Arrays.equals(game.getPositions("hare"), froms)) {
-                    update = "UPDATE games SET state = :state, hare_x = :toX, hare_y = :toY" +
-                            " WHERE gameId = :gameId";
+            String update = "";
+            int[] froms = new int[]{fromX, fromY};
+            if (Arrays.equals(game.getPositions("hare"), froms)) {
+                update = "UPDATE games SET state = :state, hare_x = :toX, hare_y = :toY" +
+                        " WHERE gameId = :gameId";
+            }
+            for (int i = 1; i < 4; i++) {
+                int[] temp = game.getPositions("hound" + Integer.toString(i));
+                if (Arrays.equals(temp, froms)) {
+                    update = "UPDATE games SET state = :state, hound" + Integer.toString(i) +
+                            "_x = :toX, hound" + Integer.toString(i) + "_y = :toY " +
+                            "WHERE gameId = :gameId";
+                    break;
                 }
-                for (int i = 1; i < 4; i++) {
-                    int[] temp = game.getPositions("hound" + Integer.toString(i));
-                    if (Arrays.equals(temp, froms)) {
-                        update = "UPDATE games SET state = :state, hound" + Integer.toString(i) +
-                                "_x = :toX, hound" + Integer.toString(i) + "_y = :toY " +
-                                "WHERE gameId = :gameId";
-                        break;
-                    }
-                }
-
-                if (!update.equals("")){
-                    conn.createQuery(update).addParameter("state", board.getState())
-                            .addParameter("toX", toX)
-                            .addParameter("toY", toY)
-                            .addParameter("gameId", Integer.parseInt(gameId))
-                            .executeUpdate();
-                }
-                return new MoveMessage(data.getPlayerId());
             }
 
+            if (!update.equals("")) {
+                conn.createQuery(update).addParameter("state", board.getState())
+                        .addParameter("toX", toX)
+                        .addParameter("toY", toY)
+                        .addParameter("gameId", Integer.parseInt(gameId))
+                        .executeUpdate();
+            }
+            return new MoveMessage(data.getPlayerId());
         }
     }
 
