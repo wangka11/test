@@ -5,6 +5,8 @@ com/oose2017/kwang57/hareandhounds/GameService$GameServiceJoinException.class
 com/oose2017/kwang57/hareandhounds/MoveMessage.class
 com/oose2017/kwang57/hareandhounds/Bootstrap.class
 com/oose2017/kwang57/hareandhounds/MapKey.class
+com/oose2017/kwang57/hareandhounds/StateMessage.class
+com/oose2017/kwang57/hareandhounds/BoardMessage.class
 com/oose2017/kwang57/hareandhounds/GameService$GameServiceIdException.class
 com/oose2017/kwang57/hareandhounds/MovingData.class
 com/oose2017/kwang57/hareandhounds/Game.class

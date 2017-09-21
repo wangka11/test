@@ -108,12 +108,12 @@ public class GameService {
     }
     
 
-    public Board describeState(String gameId) throws ArrayIndexOutOfBoundsException, GameServiceIdException{
+    public StateMessage describeState(String gameId) throws ArrayIndexOutOfBoundsException, GameServiceIdException{
         if (!isValidId(gameId)){
             return null;
         }
 
-    	return boards.get(Integer.parseInt(gameId));
+    	return new StateMessage(boards.get(Integer.parseInt(gameId)).getState());
     }
 
 
