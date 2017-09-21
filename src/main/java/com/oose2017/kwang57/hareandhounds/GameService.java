@@ -360,12 +360,13 @@ public class GameService {
             board.setWin(Board.WIN_HOUND);
         }
 
-        if (houndStalling && hareStalling){
-            board.setWin(Board.WIN_HARE_S);
-        }
+//        if (houndStalling && hareStalling){
+//            board.setWin(Board.WIN_HARE_S);
+//        }
 
         if(board.getStallings().containsValue(3)){
-            houndStalling = true;
+            //houndStalling = true;
+            board.setWin(Board.WIN_HARE_S);
         }
 
     }
