@@ -231,7 +231,8 @@ public class GameService {
             throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
         }
         if (!isIllegalMove(board, data)) {
-            if (board.getState().equals(Board.WIN_HARE_S)){
+            if (!board.getState().equals(Board.TURN_HARE) && !board.getState().equals(Board.TURN_HOUND)
+                    && !board.getState().equals(STATE_WAITING)){
                 logger.error("INCORRECT_TURN");
                 throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
             }
