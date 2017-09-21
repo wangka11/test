@@ -204,11 +204,11 @@ public class GameService {
         }
     }
 
-    public void play(String gameId, String body) throws GameServiceException,
+    public MoveMessage play(String gameId, String body) throws GameServiceException,
             GameServiceIdException, GameServiceMoveException{
 
 	    if (!isValidId(gameId)){
-	        return;
+	        return null;
         }
         if(gameId == null || boards.get(Integer.parseInt(gameId)) == null) {
             logger.error("INVALID_GAME_ID");
@@ -277,7 +277,7 @@ public class GameService {
                             .addParameter("gameId", Integer.parseInt(gameId))
                             .executeUpdate();
                 }
-
+                return new MoveMessage(data.getPlayerId());
             }
 
         }
