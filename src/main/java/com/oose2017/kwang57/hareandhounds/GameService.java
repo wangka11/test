@@ -231,7 +231,7 @@ public class GameService {
                 throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
             }
             logger.error("ILLEGAL_MOVE");
-            throw new GameServiceMoveException("ILLEGAL_MOVE", null);
+            throw new GameServiceMoveException("ILLEGAL_MOVE", new RuntimeException("ILLEGAL_MOVE"));
         }
         if (!isValidTurn(board, data)) {
             logger.error("INCORRECT_TURN");
@@ -336,18 +336,18 @@ public class GameService {
         int[] hound3 = board.getHound3();
         int[] hare = board.getHare();
         boolean hareTrapped = true;
-        Map<MapKey, Map<String, Integer>> stalling = board.getStalling();
-        boolean hareStalling= false;
-        boolean houndStalling = false;
+//        Map<MapKey, Map<String, Integer>> stalling = board.getStalling();
+//        boolean hareStalling= false;
+//        boolean houndStalling = false;
         for (int i=0; i<3; i++){
             for (int j=0; j<5; j++){
                 MovingData data = new MovingData(board.getGameId(), "0", hare[0],hare[1], j, i);
                 if (isIllegalMove(board, data)){
                     hareTrapped = false;
                 }
-                MapKey key = new MapKey(new int[] {j, i});
-                if (stalling.containsKey(key)){
-                    Map<String, Integer> temp = stalling.get(key);
+//                MapKey key = new MapKey(new int[] {j, i});
+//                if (stalling.containsKey(key)){
+//                    Map<String, Integer> temp = stalling.get(key);
                     /*if (temp.containsKey("hare")){
                         if (temp.get("hare") >= 3){
                             hareStalling = true;
@@ -358,7 +358,7 @@ public class GameService {
 //                            houndStalling = true;
 //                        }
 //                    }
-                }
+
             }
         }
         if (hare[0] <= hound1[0] && hare[0] <= hound2[0] && hare[0] <= hound3[0]){

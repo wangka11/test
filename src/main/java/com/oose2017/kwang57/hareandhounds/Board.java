@@ -9,7 +9,7 @@ public class Board {
 	public static int HOUND = 1;
 	public static int HARE = 2;
 
-	private Map<MapKey, Map<String, Integer>> stallingMonitor = new Hashtable<>();
+	//private Map<MapKey, Map<String, Integer>> stallingMonitor = new Hashtable<>();
 
     private String state = "WAITING_FOR_SECOND_PLAYER";
     static final String TURN_HOUND = "TURN_HOUND";
@@ -36,18 +36,18 @@ public class Board {
 		board[0][4] = -1;
 		board[2][0] = -1;
 		board[2][4] = -1;
-		Map<String, Integer> houndMonitor = new Hashtable<>();
-        Map<String, Integer> hareMonitor = new Hashtable<>();
-		houndMonitor.put("hound", 1);
-		hareMonitor.put("hare", 1);
+//		Map<String, Integer> houndMonitor = new Hashtable<>();
+//        Map<String, Integer> hareMonitor = new Hashtable<>();
+//		houndMonitor.put("hound", 1);
+//		hareMonitor.put("hare", 1);
         MapKey key1 = new MapKey(new int[]{1, 0});
         MapKey key2 = new MapKey(new int[]{0, 1});
         MapKey key3 = new MapKey(new int[]{1, 2});
         MapKey key4 = new MapKey(new int[]{4, 1});
-		stallingMonitor.put(key1, houndMonitor);
-        stallingMonitor.put(key2, houndMonitor);
-        stallingMonitor.put(key3, houndMonitor);
-        stallingMonitor.put(key4, hareMonitor);
+//		stallingMonitor.put(key1, houndMonitor);
+//        stallingMonitor.put(key2, houndMonitor);
+//        stallingMonitor.put(key3, houndMonitor);
+//        stallingMonitor.put(key4, hareMonitor);
 
 	}
 
@@ -126,20 +126,20 @@ public class Board {
                 }
             }
 
-            if (!pieceName.equals("")){
-                Map<String, Integer> temp = new Hashtable<>();
-                if (stallingMonitor.get(newPos) != null){
-                    temp = stallingMonitor.get(newPos);
-                    if (temp.containsKey(pieceName)){
-                        temp.put(pieceName, temp.get(pieceName) + 1);
-                    } else {
-                        temp.put(pieceName, 1);
-                    }
-                } else{
-                    temp.put(pieceName, 1);
-                }
-                stallingMonitor.put(newPos, temp);
-            }
+//            if (!pieceName.equals("")){
+//                Map<String, Integer> temp = new Hashtable<>();
+//                if (stallingMonitor.get(newPos) != null){
+//                    temp = stallingMonitor.get(newPos);
+//                    if (temp.containsKey(pieceName)){
+//                        temp.put(pieceName, temp.get(pieceName) + 1);
+//                    } else {
+//                        temp.put(pieceName, 1);
+//                    }
+//                } else{
+//                    temp.put(pieceName, 1);
+//                }
+//                stallingMonitor.put(newPos, temp);
+//            }
             board[fromY][fromX] = 0;
 
             String key = Arrays.deepToString(getBoard());
@@ -153,7 +153,7 @@ public class Board {
 
     public Hashtable<String, Integer> getStallings() {return this.stallings;}
 
-    public Map<MapKey, Map<String, Integer>> getStalling() {return stallingMonitor;}
+    //public Map<MapKey, Map<String, Integer>> getStalling() {return stallingMonitor;}
 
     public int[] getHound1() {return this.hound1;}
 
