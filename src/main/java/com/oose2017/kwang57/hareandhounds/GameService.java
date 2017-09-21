@@ -223,16 +223,14 @@ public class GameService {
         }
 
         Board board = boards.get(Integer.parseInt(gameId));
-
-        if (!isValidTurn(board, data)) {
-            logger.error("INCORRECT_TURN");
-            throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
-        }
         if (!isIllegalMove(board, data)) {
             logger.error("ILLEGAL_MOVE");
             throw new GameServiceMoveException("ILLEGAL_MOVE", null);
         }
-        
+        if (!isValidTurn(board, data)) {
+            logger.error("INCORRECT_TURN");
+            throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
+        }
         int fromX, fromY, toX, toY;
         fromX = data.getFromX();
         fromY = data.getFromY();
