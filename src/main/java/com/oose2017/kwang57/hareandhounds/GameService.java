@@ -225,6 +225,11 @@ public class GameService {
 
         Board board = boards.get(Integer.parseInt(gameId));
         if (!isIllegalMove(board, data)) {
+            if (board.getState().equals(Board.WIN_HARE_E) || board.getState().equals(Board.WIN_HARE_S) ||
+                    board.getState().equals(Board.WIN_HOUND)){
+                logger.error("INCORRECT_TURN");
+                throw new GameServiceMoveException("INCORRECT_TURN", new RuntimeException("INCORRECT_TURN"));
+            }
             logger.error("ILLEGAL_MOVE");
             throw new GameServiceMoveException("ILLEGAL_MOVE", null);
         }
@@ -301,6 +306,10 @@ public class GameService {
         fromY = data.getFromY();
         toX = data.getToX();
         toY = data.getToY();
+
+        if (board.getBoard()[fromY][fromX] == 0 || board.getBoard()[fromY][fromX] == -1){
+            return false;
+        }
 
         if (board.getBoard()[fromY][fromX] == Board.HOUND && toX < fromX ){
             return false;
